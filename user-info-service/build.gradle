@@ -1,0 +1,52 @@
+plugins {
+	id 'org.springframework.boot' version '2.6.2'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+}
+
+group = 'com.innowise'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+	all {
+		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation group: 'org.liquibase', name: 'liquibase-core',
+			version: findProperty("liquibase-core.version")
+	implementation group: 'org.springdoc', name: 'springdoc-openapi-ui',
+			version: findProperty("springdoc-openapi-ui.version")
+	implementation group: 'org.mapstruct', name: 'mapstruct',
+			version: findProperty("mapstruct.version")
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-log4j2',
+			version: findProperty("spring-boot-starter-log4j2.version")
+	implementation group: 'com.opencsv', name: 'opencsv',
+			version: findProperty("opencsv.version")
+	implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-eureka-client',
+			version: findProperty("spring-cloud-starter-netflix-eureka-client.version")
+
+	runtimeOnly 'org.postgresql:postgresql'
+	annotationProcessor 'org.projectlombok:lombok'
+	annotationProcessor "org.mapstruct:mapstruct-processor:" + findProperty("mapstruct-processor.version")
+	annotationProcessor group: 'org.hibernate', name: 'hibernate-jpamodelgen', version: findProperty("hibernate-jpamodelgen.version")
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: findProperty("junit-jupiter.version")
+	testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: findProperty("junit-jupiter.version")
+}
+
+test {
+	useJUnitPlatform()
+}
