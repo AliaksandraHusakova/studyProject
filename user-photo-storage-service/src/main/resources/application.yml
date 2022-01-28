@@ -1,0 +1,28 @@
+server:
+  port: ${PORT:8082}
+
+spring:
+  application:
+    name: user-photo-storage-service
+
+  data:
+    mongodb:
+      port: ${MONGO_PORT:27018}
+      host: ${MONGO_HOST:localhost}
+#      database: ${MONGO_DB:user-photo}
+      username: root
+      password: root
+      authentication-database: admin
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 200MB
+      max-request-size: 200MB
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
