@@ -1,4 +1,4 @@
-package com.innowise.userinfoservice.model;
+package com.innowise.userinfoservice.constant;
 
 public enum LogMessage {
     ADD_EMPLOYEE("Add new Employee at database with Id %d"),

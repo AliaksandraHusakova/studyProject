@@ -2,14 +2,18 @@ package com.innowise.userinfoservice.model.dto;
 
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvDate;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class EmployeeToCsvDTO {
 
@@ -30,7 +34,7 @@ public class EmployeeToCsvDTO {
 
     @NotNull
     @CsvBindByName(column = "DATE_OF_BIRTH")
-    @CsvDate(value = "yyyy-MM-dd HH:mm:ss.s")
+    @CsvDate(value = "yyyy-MM-dd")
     LocalDate dateOfBirth;
 
     @CsvBindByName(column = "USER_ID")

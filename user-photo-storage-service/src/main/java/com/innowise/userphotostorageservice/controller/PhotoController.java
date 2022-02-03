@@ -23,12 +23,12 @@ public class PhotoController {
         this.photoService = photoService;
     }
 
-    @GetMapping("download/{id}")
+    @GetMapping("/download/{id}")
     public ResponseEntity<Object> downloadPhoto(@PathVariable String id) throws IOException {
         return new ResponseEntity<>(photoService.downloadPhoto(id), HttpStatus.OK);
     }
 
-    @PostMapping("upload")
+    @PostMapping("/upload")
     public ResponseEntity<Object> uploadPhoto(@RequestBody MultipartFile photo) throws IOException {
         return new ResponseEntity<>(photoService.uploadPhoto(photo), HttpStatus.CREATED);
     }

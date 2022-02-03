@@ -1,54 +1,67 @@
 package com.innowise.userinfoservice.controller;
 
+import com.innowise.userinfoservice.constant.ComponentName;
+import com.innowise.userinfoservice.constant.ErrorMessage;
 import com.innowise.userinfoservice.exception.EmptyFileException;
-import com.innowise.userinfoservice.service.EmployeeService;
+import com.innowise.userinfoservice.model.entity.Employee;
+import com.innowise.userinfoservice.service.upload.UploadService;
 import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/v1/upload")
 public class UploadController {
 
-    private final EmployeeService employeeService;
-
-    public UploadController(EmployeeService employeeService) {
-        this.employeeService = employeeService;
-    }
+    @Autowired
+    private Map<String, UploadService> uploadServices;
 
     @Operation(
-            summary = "Загрузить список employee (*.csv)",
-            description = "Загрузить список employee (*.csv)"
+            summary = "Upload employees list",
+            description = "Upload employees list"
     )
-    @PostMapping(value = "upload_employees_from_json", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Object> uploadEmployeesFromJson(@RequestPart("file") MultipartFile file) throws IOException {
+    @PostMapping(value = "/upload-employees", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<List<Employee>> uploadEmployees(
+            @RequestPart("file") MultipartFile file,
+            @RequestParam String fileFormat
+    ) {
 
         if (file.isEmpty()) {
             throw new EmptyFileException(file.getOriginalFilename());
         } else {
-            return new ResponseEntity<>(employeeService.uploadEmployeesFromJson(file), HttpStatus.CREATED);
-        }
-    }
 
-    @Operation(
-            summary = "Загрузить список employee (*.csv)",
-            description = "Загрузить список employee (*.csv)"
-    )
-    @PostMapping(value = "upload_employees_from_csv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Object> uploadEmployeesFromCsv(@RequestPart("file") MultipartFile file) throws IOException {
+            switch (fileFormat) {
 
-        if (file.isEmpty()) {
-            throw new EmptyFileException(file.getOriginalFilename());
-        } else {
-            return new ResponseEntity<>(employeeService.uploadEmployeesFromCsv(file), HttpStatus.CREATED);
+                case "csv":
+                    return new ResponseEntity<>(
+                            uploadServices.get(ComponentName.EMPLOYEE_UPLOAD_CSV.name).uploadFromFile(file),
+                            HttpStatus.CREATED
+                    );
+
+                case "json":
+                    return new ResponseEntity<>(
+                            uploadServices.get(ComponentName.EMPLOYEE_UPLOAD_JSON.name).uploadFromFile(file),
+                            HttpStatus.CREATED
+                    );
+
+                default:
+                    throw new ResponseStatusException(
+                            HttpStatus.BAD_REQUEST,
+                            String.format(ErrorMessage.FILE_FORMAT_NOT_FOUND.message, fileFormat)
+                    );
+            }
         }
     }
 }

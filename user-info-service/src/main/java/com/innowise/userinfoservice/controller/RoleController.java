@@ -24,10 +24,10 @@ public class RoleController {
     }
 
     @Operation(
-            summary = "Найти role по id",
-            description = "Найти role по id"
+            summary = "Find role by id",
+            description = "Find role by id"
     )
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Object> findRoleById(
             @PathVariable @Min(MIN_ID) int id
     ) {

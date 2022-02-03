@@ -41,8 +41,8 @@ public class EmployeeController {
     }
 
     @Operation(
-            summary = "Найти всех employee",
-            description = "Найти всех employee"
+            summary = "Find all employee",
+            description = "Find all employee"
     )
     @GetMapping
     public ResponseEntity<Object> getAllEmployees() {
@@ -50,10 +50,10 @@ public class EmployeeController {
     }
 
     @Operation(
-            summary = "Найти employee по id",
-            description = "Найти employee по id"
+            summary = "Find employee by id",
+            description = "Find employee by id"
     )
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Object> findEmployeeById(
             @PathVariable @Min(MIN_ID) int id
     ) {
@@ -62,10 +62,10 @@ public class EmployeeController {
     }
 
     @Operation(
-            summary = "Найти employee по фильтру",
-            description = "Найти employee по фильтру"
+            summary = "Filter employee",
+            description = "Filter employee"
     )
-    @GetMapping("get_filtered_employees")
+    @GetMapping("/get-filtered-employees")
     public ResponseEntity<Object> getFilteredEmployees(
             @RequestParam(required = false) String lastName,
             @RequestParam(required = false) String firstName,
@@ -93,43 +93,48 @@ public class EmployeeController {
                 .sortDir(sortDir)
                 .build();
 
-        return new ResponseEntity<>(employeeService.getFilteredEmployees(filterEmployee, sort), HttpStatus.OK);
+        return new ResponseEntity<>(
+                employeeService.getFilteredEmployees(filterEmployee, sort), HttpStatus.OK
+        );
     }
 
     @Operation(
-            summary = "Добавить employee",
-            description = "Добавить employee"
+            summary = "Add employee",
+            description = "Add employee"
     )
-    @PostMapping("add")
+    @PostMapping("/add")
     public ResponseEntity<Object> addEmployee(
             @Valid @RequestBody EmployeeDTO employeeDTO
     ) {
-        return new ResponseEntity<>(employeeService.addEmployee(
-                mapper.employeeDTOtoEmployee(employeeDTO)), HttpStatus.CREATED);
+        return new ResponseEntity<>(
+                employeeService.addEmployee(mapper.employeeDTOtoEmployee(employeeDTO)), HttpStatus.CREATED
+        );
     }
 
     @Operation(
-            summary = "Отредактировать employee",
-            description = "Отредактировать employee"
+            summary = "Edit employee",
+            description = "Edit employee"
     )
-    @PutMapping("edit/{id}")
+    @PutMapping("/edit/{id}")
     public ResponseEntity<Object> editEmployee(
             @Valid @RequestBody EmployeeDTO employeeDTO,
             @PathVariable @Min(MIN_ID) Integer id
     ) {
 
         if (employeeService.findEmployeeById(id) != null) {
-            return new ResponseEntity<>(employeeService.editEmployee(mapper.employeeDTOtoEmployee(employeeDTO), id), HttpStatus.OK);
+            return new ResponseEntity<>(
+                    employeeService.editEmployee(mapper.employeeDTOtoEmployee(employeeDTO), id), HttpStatus.OK
+            );
         }
 
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Operation(
-            summary = "Удалить employee",
-            description = "Удалить employee"
+            summary = "Delete employee",
+            description = "Delete employee"
     )
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Object> deleteEmployee(
             @PathVariable @Min(MIN_ID) Integer id
     ) {

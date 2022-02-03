@@ -1,48 +1,51 @@
 package com.innowise.userinfoservice.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.innowise.userinfoservice.service.DownloadService;
-import com.innowise.userinfoservice.service.EmployeeService;
-import com.opencsv.exceptions.CsvDataTypeMismatchException;
-import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
+import com.innowise.userinfoservice.constant.ComponentName;
+import com.innowise.userinfoservice.constant.ErrorMessage;
+import com.innowise.userinfoservice.constant.FileName;
+import com.innowise.userinfoservice.service.download.DownloadService;
 import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.io.IOException;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/v1/download")
 public class DownloadController {
 
-    private final EmployeeService employeeService;
-    private final DownloadService downloadService;
-
-    public DownloadController(EmployeeService employeeService, DownloadService downloadService) {
-        this.employeeService = employeeService;
-        this.downloadService = downloadService;
-    }
+    @Autowired
+    private Map<String, DownloadService> downloadServices;
 
     @Operation(
-            summary = "Скачать список employee (*.json)",
-            description = "Скачать список employee (*.json)"
+            summary = "Download employees list",
+            description = "Download employees list"
     )
-    @GetMapping("download_employees_json")
-    public ResponseEntity<Object> downloadEmployeesJson() throws JsonProcessingException {
+    @GetMapping("/download-employees/{fileFormat}")
+    public ResponseEntity<byte[]> downloadEmployees(@PathVariable String fileFormat) {
 
-        return downloadService.downloadFile("employees.json", employeeService.getJsonEmployeesListBytes());
-    }
+        switch (fileFormat) {
 
-    @Operation(
-            summary = "Скачать список employee (*.csv)",
-            description = "Скачать список employee (*.csv)"
-    )
-    @GetMapping("download_employees_csv")
-    public ResponseEntity<Object> downloadEmployeesCsv()
-            throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
-        
-        return downloadService.downloadFile("roles.csv", employeeService.getCsvEmployeesListBytes());
+            case "csv":
+
+                return downloadServices.get(ComponentName.EMPLOYEE_DOWNLOAD_CSV.name).downloadFile(FileName.EMPLOYEES_LIST_CSV.name);
+
+            case "json":
+
+                return downloadServices.get(ComponentName.EMPLOYEE_DOWNLOAD_JSON.name).downloadFile(FileName.EMPLOYEES_LIST_JSON.name);
+
+            default:
+
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        String.format(ErrorMessage.FILE_FORMAT_NOT_FOUND.message, fileFormat)
+                );
+        }
     }
 }

@@ -1,6 +1,6 @@
 package com.innowise.userinfoservice.exception;
 
-import com.innowise.userinfoservice.model.ErrorMessage;
+import com.innowise.userinfoservice.constant.ErrorMessage;
 
 public class RoleNotFoundException extends RuntimeException {
 

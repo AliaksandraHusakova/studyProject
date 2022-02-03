@@ -36,6 +36,8 @@ dependencies {
 			version: findProperty("opencsv.version")
 	implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-eureka-client',
 			version: findProperty("spring-cloud-starter-netflix-eureka-client.version")
+	implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310',
+			version: findProperty("jackson-datatype-jsr310.version")
 
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.projectlombok:lombok'
